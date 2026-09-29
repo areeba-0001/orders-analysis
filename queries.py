@@ -3,6 +3,7 @@ import sqlite3
 conn = sqlite3.connect("orders.db")
 cur = conn.cursor()
 
+# Part (a): INNER JOIN
 print("Customer orders (joined):")
 
 cur.execute("""
@@ -17,6 +18,7 @@ for row in cur.fetchall():
     print(row)
 
 
+# Part (b): GROUP BY with SUM()
 print("\nTotal spend per customer:")
 
 cur.execute("""
@@ -26,6 +28,23 @@ INNER JOIN orders o
 ON c.customer_id = o.customer_id
 GROUP BY c.customer_id, c.name
 ORDER BY total_spent DESC;
+""")
+
+for row in cur.fetchall():
+    print(row)
+
+
+# Part (c): GROUP BY with HAVING
+print("\nCities with avg order > 5000:")
+
+cur.execute("""
+SELECT c.city, AVG(o.amount) AS avg_order
+FROM customers c
+INNER JOIN orders o
+ON c.customer_id = o.customer_id
+GROUP BY c.city
+HAVING AVG(o.amount) > 5000
+ORDER BY avg_order DESC;
 """)
 
 for row in cur.fetchall():
